@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>开奖未中奖 - 活动页</title>
+  <link rel="stylesheet" href="/assets/mobile.css">
+</head>
+<body>
+  <div class="mobile-shell">
+    <div class="page">
+      <section class="hero">
+        <div class="eyebrow">开奖结果已公布</div>
+        <h1 id="heroTitle">这次差一点，下次好运继续</h1>
+        <p id="heroDesc">正在加载本次开奖结果。</p>
+        <div class="directory" data-mobile-directory></div>
+      </section>
+
+      <section class="card result-panel">
+        <div class="result-icon result-lost-icon">◎</div>
+        <span class="status-badge status-lost">未中奖</span>
+        <h2 id="resultTitle" class="section-title">谢谢参与</h2>
+        <div id="resultTips" class="tips">-</div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">本次参与号码</h2>
+        <div id="codeList" class="code-list"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">后续动作</h2>
+        <div class="benefit-list">
+          <div class="benefit-item"><strong>查看其他活动</strong><div class="subtle">可返回活动列表继续参与新的抽奖活动。</div></div>
+          <div class="benefit-item"><strong>关注中奖记录</strong><div class="subtle">如有历史中奖记录，可在“中奖记录”页统一查看。</div></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="/m-activity-list.html">返回活动列表</a>
+          <a class="btn btn-secondary" href="/m-records.html">查看我的记录</a>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script src="/assets/mobile.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const activityId = params.get("id") || "1002";
+    const userId = mobileApp.getUserId();
+
+    mobileApp.api.get(`/api/mobile/activities/${activityId}?userId=${encodeURIComponent(userId)}`)
+      .then((activity) => {
+        document.title = `${activity.name} - 未中奖`;
+        document.getElementById("heroTitle").textContent = activity.name;
+        document.getElementById("heroDesc").textContent = activity.description || "开奖结果已生成，你可以查看本次参与的抽奖码。";
+        document.getElementById("resultTips").textContent = `活动开奖时间：${activity.drawTimeLabel}。当前用户状态：${activity.userStatus}。`;
+        document.getElementById("codeList").innerHTML = activity.userEntries.length
+          ? activity.userEntries.map((entry) => `
+            <div class="code-item">
+              <strong>${entry.code}</strong>
+              <div class="subtle">来源：${entry.source} · ${entry.obtainedAtLabel}</div>
+              <div class="subtle">状态：${entry.status} · ${entry.prizeName || "谢谢参与"}</div>
+            </div>
+          `).join("")
+          : '<div class="benefit-item"><div class="subtle">当前活动暂无参与记录。</div></div>';
+      })
+      .catch(() => {
+        document.getElementById("heroDesc").textContent = "活动加载失败，请稍后重试。";
+      });
+  </script>
+</body>
+</html>

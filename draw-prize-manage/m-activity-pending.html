@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>已参与待开奖 - 活动页</title>
+  <link rel="stylesheet" href="/assets/mobile.css">
+</head>
+<body>
+  <div class="mobile-shell">
+    <div class="page">
+      <section class="hero">
+        <div class="eyebrow">待开奖</div>
+        <h1 id="heroTitle">你的幸运号码已锁定</h1>
+        <p id="heroDesc">正在加载当前活动的抽奖码信息。</p>
+        <div class="directory" data-mobile-directory></div>
+      </section>
+
+      <section class="card">
+        <span id="statusBadge" class="status-badge status-pending">待开奖</span>
+        <h2 class="section-title">我的抽奖码</h2>
+        <div id="summaryText" class="subtle">-</div>
+        <div id="codeList" class="code-list"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">继续参与</h2>
+        <div id="taskList" class="benefit-list"></div>
+        <div class="cta-row">
+          <a id="primaryAction" class="btn btn-primary" href="#">再领一个抽奖码</a>
+          <a class="btn btn-secondary" href="/m-records.html">查看中奖记录</a>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script src="/assets/mobile.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const activityId = params.get("id") || "1006";
+    const userId = mobileApp.getUserId();
+    let currentActivity = null;
+
+    async function loadActivity() {
+      const activity = await mobileApp.api.get(`/api/mobile/activities/${activityId}?userId=${encodeURIComponent(userId)}`);
+      currentActivity = activity;
+      document.title = `${activity.name} - 待开奖`;
+      document.getElementById("heroTitle").textContent = activity.subtitle || activity.name;
+      document.getElementById("heroDesc").textContent = `开奖时间：${activity.drawTimeLabel}，你当前共有 ${activity.userEntryCount} 个抽奖码参与统一开奖。`;
+      document.getElementById("statusBadge").textContent = activity.userStatus;
+      document.getElementById("summaryText").textContent = `参与限制：${activity.joinLimit} · 当前状态：${activity.userStatus}`;
+      document.getElementById("codeList").innerHTML = activity.userEntries.length
+        ? activity.userEntries.map((entry) => `
+          <div class="code-item">
+            <strong>${entry.code}</strong>
+            <div class="subtle">来源：${entry.source} · ${entry.obtainedAtLabel}</div>
+          </div>
+        `).join("")
+        : '<div class="benefit-item"><div class="subtle">暂无抽奖码，请先参与活动。</div></div>';
+      document.getElementById("taskList").innerHTML = activity.tasks.length
+        ? activity.tasks.map((task) => `<div class="benefit-item"><strong>${task}</strong><div class="subtle">完成后可额外获得 1 个抽奖码。</div></div>`).join("")
+        : '<div class="benefit-item"><div class="subtle">后台暂未配置参与任务</div></div>';
+    }
+
+    async function joinAgain(event) {
+      event.preventDefault();
+      if (!currentActivity) return;
+      try {
+        const result = await mobileApp.api.post(`/api/mobile/activities/${activityId}/join`, {
+          userId,
+          source: currentActivity.tasks[0] || "用户端参与"
+        });
+        window.alert(`领取成功，新增抽奖码 ${result.entry.code}`);
+        await loadActivity();
+      } catch (error) {
+        window.alert(error.message);
+      }
+    }
+
+    document.getElementById("primaryAction").addEventListener("click", joinAgain);
+    loadActivity().catch(() => {
+      document.getElementById("heroDesc").textContent = "活动加载失败，请稍后重试。";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>用户端导航 - 统开奖平台</title>
+  <link rel="stylesheet" href="/assets/mobile.css">
+</head>
+<body>
+  <div class="mobile-shell">
+    <div class="page">
+      <section class="hero">
+        <div class="eyebrow">M 版活动原型</div>
+        <h1>统一开奖活动用户端</h1>
+        <p>围绕“未参与、待开奖、未中奖、已中奖、中奖记录、奖品兑换”六类核心状态，整理了一套可直接演示的移动端页面。</p>
+        <div class="directory" data-mobile-directory></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">页面目录</h2>
+        <div class="record-list">
+          <a class="record-item" href="/m-activity-new.html" style="text-decoration:none;color:inherit;">
+            <div>
+              <strong>未参与页</strong>
+              <div class="subtle">展示奖品墙、任务入口、倒计时和参与动机。</div>
+            </div>
+            <div class="record-side"><span class="badge">活动首页</span></div>
+          </a>
+          <a class="record-item" href="/m-activity-list.html" style="text-decoration:none;color:inherit;">
+            <div>
+              <strong>活动列表页</strong>
+              <div class="subtle">查看自己参加过的所有抽奖活动，并根据状态跳转详情。</div>
+            </div>
+            <div class="record-side"><span class="badge">我的活动</span></div>
+          </a>
+          <a class="record-item" href="/m-activity-pending.html" style="text-decoration:none;color:inherit;">
+            <div>
+              <strong>已参与待开奖</strong>
+              <div class="subtle">同一活动展示多个抽奖码，并强调开奖时间与参与记录。</div>
+            </div>
+            <div class="record-side"><span class="badge">多抽奖码</span></div>
+          </a>
+          <a class="record-item" href="/m-activity-lost.html" style="text-decoration:none;color:inherit;">
+            <div>
+              <strong>开奖未中奖</strong>
+              <div class="subtle">保留安慰奖、分享转化和二次参与动作。</div>
+            </div>
+            <div class="record-side"><span class="badge">谢谢参与</span></div>
+          </a>
+          <a class="record-item" href="/m-activity-won.html" style="text-decoration:none;color:inherit;">
+            <div>
+              <strong>开奖已中奖</strong>
+              <div class="subtle">突出中奖结果、领取时效与兑换入口。</div>
+            </div>
+            <div class="record-side"><span class="badge">领奖引导</span></div>
+          </a>
+          <a class="record-item" href="/m-records.html" style="text-decoration:none;color:inherit;">
+            <div>
+              <strong>中奖记录页</strong>
+              <div class="subtle">查看历次中奖、领奖状态和入口跳转。</div>
+            </div>
+            <div class="record-side"><span class="badge">个人中心</span></div>
+          </a>
+          <a class="record-item" href="/m-redeem.html" style="text-decoration:none;color:inherit;">
+            <div>
+              <strong>奖品兑换页</strong>
+              <div class="subtle">收货信息、兑奖码、发货说明统一汇总。</div>
+            </div>
+            <div class="record-side"><span class="badge">兑换表单</span></div>
+          </a>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">体验说明</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <strong>1. 从未参与页进入</strong>
+            <div class="subtle">用户看到奖品墙、参与任务和开奖倒计时，理解活动价值。</div>
+          </div>
+          <div class="timeline-item">
+            <strong>2. 完成任务后进入待开奖页</strong>
+            <div class="subtle">同一个用户可拿到多个抽奖码，并在“我的抽奖码”中持续累积。</div>
+          </div>
+          <div class="timeline-item">
+            <strong>3. 开奖后分流到中奖或未中奖</strong>
+            <div class="subtle">中奖用户去领奖，未中奖用户拿到安慰权益和再参与机会。</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script src="/assets/mobile.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>活动管理 - 统开奖平台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin:0; font-family:system-ui,sans-serif; background:#f0f2f5; min-height:100vh; }
+    .main { margin-left:240px; padding:20px; }
+    table { width:100%; background:#fff; border-collapse:collapse; margin-top:20px; }
+    th, td { padding:12px; border-bottom:1px solid #ddd; text-align:left; }
+    th { background:#fafafa; }
+    .btn { padding:8px 16px; background:#1890ff; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+    .btn-link { padding:6px 12px; background:#52c41a; color:#fff; border-radius:4px; text-decoration:none; display:inline-block; }
+    .toolbar { display:flex; gap:12px; align-items:center; }
+    .toolbar input { padding:8px 12px; border:1px solid #d9d9d9; border-radius:4px; min-width:220px; }
+  </style>
+</head>
+<body>
+
+<div style="width:240px;background:#001529;color:#fff;height:100vh;position:fixed;top:0;left:0;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.3)">
+  <div style="padding:20px;font-size:22px;font-weight:bold;border-bottom:1px solid #0f2a47">统一开奖平台</div>
+  <ul style="list-style:none;margin:16px 0;padding:0">
+    <li data-page="dashboard.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='dashboard.html'">仪表盘</li>
+    <li data-page="activity-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='activity-list.html'">活动管理</li>
+    <li data-page="prize-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='prize-manage.html'">奖品管理</li>
+    <li data-page="entry-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='entry-list.html'">参与记录</li>
+    <li data-page="draw-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='draw-manage.html'">开奖管理</li>
+    <li data-page="winner-intervene.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='winner-intervene.html'">中奖干预</li>
+    <li data-page="statistics.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='statistics.html'">数据统计</li>
+    <li style="padding:14px 24px;cursor:pointer;transition:0.3s;margin-top:40px" onclick="if(confirm('确定退出？'))location.href='dashboard.html'">退出登录</li>
+  </ul>
+</div>
+
+<div class="main">
+  <h1>活动管理</h1>
+  <div class="toolbar">
+    <button class="btn" onclick="createActivity()">+ 新建活动</button>
+    <input id="activityNameInput" placeholder="输入新活动名称，留空则自动生成">
+  </div>
+  <table>
+    <thead><tr><th>ID</th><th>活动名称</th><th>活动时间</th><th>参与人数</th><th>状态</th><th>开奖时间</th><th>操作</th></tr></thead>
+    <tbody id="activityTableBody"></tbody>
+  </table>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+app.initMenuHighlight();
+app.initAdminFloatingNav();
+
+async function loadActivities() {
+  const activities = await app.api.get("/api/activities");
+  const tbody = document.getElementById("activityTableBody");
+  tbody.innerHTML = activities.map((activity) => `
+    <tr>
+      <td>${activity.id}</td>
+      <td>${activity.name}</td>
+      <td>${app.formatDateTime(activity.startTime).slice(5, 16)} ~ ${app.formatDateTime(activity.endTime).slice(5, 16)}</td>
+      <td>${activity.participantCount.toLocaleString("zh-CN")}</td>
+      <td>${activity.status}</td>
+      <td>${app.formatDateTime(activity.drawTime)}</td>
+      <td><a class="btn-link" href="/activity-edit.html?id=${activity.id}">编辑</a></td>
+    </tr>
+  `).join("");
+}
+
+async function createActivity() {
+  const input = document.getElementById("activityNameInput");
+  const name = input.value.trim() || `新活动${Date.now().toString().slice(-4)}`;
+  await app.api.post("/api/activities", {
+    name,
+    status: "草稿",
+    startTime: "2026-03-01T00:00:00+08:00",
+    endTime: "2026-03-15T23:59:59+08:00",
+    drawTime: "2026-03-15T20:00:00+08:00",
+    tasks: ["分享朋友圈"]
+  });
+  input.value = "";
+  await loadActivities();
+  app.showMessage("活动已创建");
+}
+
+loadActivities().catch((error) => app.showMessage(error.message));
+</script>
+</body>
+</html>

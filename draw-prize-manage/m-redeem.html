@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>奖品兑换 - 活动页</title>
+  <link rel="stylesheet" href="/assets/mobile.css">
+</head>
+<body>
+  <div class="mobile-shell">
+    <div class="page">
+      <section class="hero">
+        <div class="eyebrow">奖品兑换页</div>
+        <h1 id="heroTitle">填写领奖信息</h1>
+        <p id="heroDesc">正在同步当前兑奖记录。</p>
+        <div class="directory" data-mobile-directory></div>
+      </section>
+
+      <section class="card">
+        <div class="reward-card">
+          <div class="subtle" style="color:#8b621d;">当前待兑换奖品</div>
+          <strong id="prizeTitle">-</strong>
+          <div id="prizeMeta" style="margin-top:8px;">-</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">收货信息</h2>
+        <div class="form-grid">
+          <input id="recipientName" class="input" placeholder="收件人" aria-label="收件人">
+          <input id="phone" class="input" placeholder="手机号" aria-label="手机号">
+          <input id="address" class="input" placeholder="详细地址" aria-label="详细地址">
+        </div>
+        <div class="cta-row">
+          <a id="submitRedeem" class="btn btn-primary" href="#">提交兑奖信息</a>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">兑奖状态</h2>
+        <div id="redeemStatus" class="benefit-list"></div>
+      </section>
+
+      <div class="footer-note">提交兑奖后，可在中奖记录页持续查看审核与发货状态。</div>
+    </div>
+  </div>
+  <script src="/assets/mobile.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const userId = mobileApp.getUserId();
+    let entryId = params.get("entryId");
+    let currentRecord = null;
+
+    function renderRecord(record) {
+      currentRecord = record;
+      document.getElementById("heroTitle").textContent = record.activityName;
+      document.getElementById("heroDesc").textContent = `兑奖状态：${record.status}${record.redeemDeadlineLabel ? ` · 截止时间：${record.redeemDeadlineLabel}` : ""}`;
+      document.getElementById("prizeTitle").textContent = record.prizeName;
+      document.getElementById("prizeMeta").textContent = `中奖抽奖码：${record.code}${record.redeemDeadlineLabel ? ` · 领奖截止：${record.redeemDeadlineLabel}` : ""}`;
+      document.getElementById("recipientName").value = record.recipientName || "";
+      document.getElementById("phone").value = record.phone || "";
+      document.getElementById("address").value = record.address || "";
+      document.getElementById("redeemStatus").innerHTML = `
+        <div class="benefit-item"><strong>${record.status}</strong><div class="subtle">${record.shippingStatus || "待填写收货信息"}</div></div>
+        ${record.trackingNo ? `<div class="benefit-item"><strong>物流单号</strong><div class="subtle">${record.trackingNo}</div></div>` : ""}
+      `;
+    }
+
+    async function loadRecord() {
+      if (!entryId) {
+        const recordsData = await mobileApp.api.get(`/api/mobile/records?userId=${encodeURIComponent(userId)}`);
+        const firstWinner = recordsData.records.find((item) => item.isWinner);
+        if (!firstWinner) {
+          document.getElementById("heroDesc").textContent = "当前没有可兑奖的中奖记录。";
+          return;
+        }
+        entryId = String(firstWinner.entryId);
+      }
+      const record = await mobileApp.api.get(`/api/mobile/redeem/${entryId}?userId=${encodeURIComponent(userId)}`);
+      renderRecord(record);
+    }
+
+    async function submitRedeem(event) {
+      event.preventDefault();
+      if (!entryId) return;
+      try {
+        const record = await mobileApp.api.post(`/api/mobile/redeem/${entryId}`, {
+          userId,
+          recipientName: document.getElementById("recipientName").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          address: document.getElementById("address").value.trim()
+        });
+        renderRecord(record);
+        window.alert("兑奖信息已提交");
+      } catch (error) {
+        window.alert(error.message);
+      }
+    }
+
+    document.getElementById("submitRedeem").addEventListener("click", submitRedeem);
+    loadRecord().catch(() => {
+      document.getElementById("heroDesc").textContent = "兑奖信息加载失败，请稍后重试。";
+    });
+  </script>
+</body>
+</html>

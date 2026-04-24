@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>已中奖 - 活动页</title>
+  <link rel="stylesheet" href="/assets/mobile.css">
+</head>
+<body>
+  <div class="mobile-shell">
+    <div class="page">
+      <section class="hero">
+        <div class="eyebrow">恭喜中奖</div>
+        <h1 id="heroTitle">已中奖</h1>
+        <p id="heroDesc">正在同步你的中奖信息。</p>
+        <div class="directory" data-mobile-directory></div>
+      </section>
+
+      <section class="card result-panel">
+        <div class="result-icon result-win-icon">★</div>
+        <span class="status-badge status-win">已中奖</span>
+        <h2 id="resultTitle" class="section-title">-</h2>
+        <div id="resultTips" class="tips">-</div>
+      </section>
+
+      <section class="card">
+        <div class="reward-card">
+          <div class="subtle" style="color:#8b621d;">中奖抽奖码</div>
+          <strong id="winningCode">-</strong>
+          <div id="winningMeta" style="margin-top:8px;">-</div>
+        </div>
+        <div class="cta-row">
+          <a id="redeemAction" class="btn btn-primary" href="/m-redeem.html">立即兑换奖品</a>
+          <a class="btn btn-secondary" href="/m-records.html">查看中奖记录</a>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script src="/assets/mobile.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const activityId = params.get("id") || "1001";
+    const userId = mobileApp.getUserId();
+
+    mobileApp.api.get(`/api/mobile/activities/${activityId}?userId=${encodeURIComponent(userId)}`)
+      .then((activity) => {
+        const winningEntry = activity.userEntries.find((entry) => entry.status === "已中奖");
+        document.title = `${activity.name} - 已中奖`;
+        document.getElementById("heroTitle").textContent = activity.name;
+        document.getElementById("heroDesc").textContent = activity.description || "恭喜你在本次活动中中奖，请尽快完成兑奖。";
+        document.getElementById("resultTitle").textContent = winningEntry ? winningEntry.prizeName : "已中奖";
+        document.getElementById("resultTips").textContent = `开奖时间：${activity.drawTimeLabel}。当前状态：${activity.userStatus}。`;
+        document.getElementById("winningCode").textContent = winningEntry ? winningEntry.code : "-";
+        document.getElementById("winningMeta").textContent = winningEntry
+          ? `来源：${winningEntry.source} · 获得时间：${winningEntry.obtainedAtLabel}`
+          : "当前活动暂无中奖记录";
+        if (winningEntry) {
+          document.getElementById("redeemAction").href = `/m-redeem.html?entryId=${winningEntry.id}&userId=${encodeURIComponent(userId)}`;
+        }
+      })
+      .catch(() => {
+        document.getElementById("heroDesc").textContent = "中奖信息加载失败，请稍后重试。";
+      });
+  </script>
+</body>
+</html>

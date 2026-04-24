@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>奖品管理 - 统开奖平台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin:0; font-family:system-ui,sans-serif; background:#f0f2f5; min-height:100vh; }
+    .main { margin-left:240px; padding:20px; }
+    .prize { background:#fff; padding:16px; margin:16px 0; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; gap:16px; }
+    .btn { padding:8px 16px; background:#1890ff; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+    .btn-danger { background:#f5222d; color:#fff; border:none; border-radius:4px; padding:8px 16px; cursor:pointer; }
+    .toolbar { display:flex; gap:12px; flex-wrap:wrap; }
+    .toolbar input { padding:8px 12px; border:1px solid #d9d9d9; border-radius:4px; }
+  </style>
+</head>
+<body>
+
+<div style="width:240px;background:#001529;color:#fff;height:100vh;position:fixed;top:0;left:0;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.3)">
+  <div style="padding:20px;font-size:22px;font-weight:bold;border-bottom:1px solid #0f2a47">统一开奖平台</div>
+  <ul style="list-style:none;margin:16px 0;padding:0">
+    <li data-page="dashboard.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='dashboard.html'">仪表盘</li>
+    <li data-page="activity-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='activity-list.html'">活动管理</li>
+    <li data-page="prize-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='prize-manage.html'">奖品管理</li>
+    <li data-page="entry-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='entry-list.html'">参与记录</li>
+    <li data-page="draw-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='draw-manage.html'">开奖管理</li>
+    <li data-page="winner-intervene.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='winner-intervene.html'">中奖干预</li>
+    <li data-page="statistics.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='statistics.html'">数据统计</li>
+    <li style="padding:14px 24px;cursor:pointer;transition:0.3s;margin-top:40px" onclick="if(confirm('确定退出？'))location.href='dashboard.html'">退出登录</li>
+  </ul>
+</div>
+
+<div class="main">
+  <h1>奖品管理</h1>
+  <h3>当前活动奖品</h3>
+  <div class="toolbar">
+    <input id="prizeNameInput" placeholder="奖品名称">
+    <input id="prizeLevelInput" type="number" min="1" value="4" placeholder="奖项等级">
+    <input id="prizeQuantityInput" type="number" min="1" value="10" placeholder="数量">
+    <button class="btn" onclick="createPrize()">+ 添加奖品</button>
+  </div>
+  <div id="prizeList"></div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+app.initMenuHighlight();
+app.initAdminFloatingNav();
+const ACTIVITY_ID = 1001;
+
+async function loadPrizes() {
+  const prizes = await app.api.get(`/api/activities/${ACTIVITY_ID}/prizes`);
+  const list = document.getElementById("prizeList");
+  list.innerHTML = prizes.map((prize) => `
+    <div class="prize">
+      <div>${prize.level >= 99 ? prize.name : `${prize.level}等奖：${prize.name}`} × ${prize.quantity} <span style="color:#999">已发放 ${prize.awarded || 0}</span></div>
+      ${prize.deletable ? `<button class="btn-danger" onclick="deletePrize(${prize.id})">删除</button>` : `<span style="color:#999">不可删除</span>`}
+    </div>
+  `).join("");
+}
+
+async function createPrize() {
+  const name = document.getElementById("prizeNameInput").value.trim();
+  const level = Number(document.getElementById("prizeLevelInput").value);
+  const quantity = Number(document.getElementById("prizeQuantityInput").value);
+  if (!name) {
+    app.showMessage("请先输入奖品名称");
+    return;
+  }
+  await app.api.post(`/api/activities/${ACTIVITY_ID}/prizes`, { name, level, quantity });
+  document.getElementById("prizeNameInput").value = "";
+  await loadPrizes();
+  app.showMessage("奖品已添加");
+}
+
+async function deletePrize(id) {
+  await app.api.delete(`/api/prizes/${id}`);
+  await loadPrizes();
+  app.showMessage("奖品已删除");
+}
+
+loadPrizes().catch((error) => app.showMessage(error.message));
+</script>
+</body>
+</html>

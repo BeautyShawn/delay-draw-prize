@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>数据统计 - 统开奖平台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body { margin:0; font-family:system-ui,sans-serif; background:#f0f2f5; min-height:100vh; }
+    .main { margin-left:240px; padding:20px; }
+    .card { background:#fff; border-radius:8px; padding:24px; margin-bottom:24px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+
+<div style="width:240px;background:#001529;color:#fff;height:100vh;position:fixed;top:0;left:0;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.3)">
+  <div style="padding:20px;font-size:22px;font-weight:bold;border-bottom:1px solid #0f2a47">统一开奖平台</div>
+  <ul style="list-style:none;margin:16px 0;padding:0">
+    <li data-page="dashboard.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='dashboard.html'">仪表盘</li>
+    <li data-page="activity-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='activity-list.html'">活动管理</li>
+    <li data-page="prize-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='prize-manage.html'">奖品管理</li>
+    <li data-page="entry-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='entry-list.html'">参与记录</li>
+    <li data-page="draw-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='draw-manage.html'">开奖管理</li>
+    <li data-page="winner-intervene.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='winner-intervene.html'">中奖干预</li>
+    <li data-page="statistics.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='statistics.html'">数据统计</li>
+    <li style="padding:14px 24px;cursor:pointer;transition:0.3s;margin-top:40px" onclick="if(confirm('确定退出？'))location.href='dashboard.html'">退出登录</li>
+  </ul>
+</div>
+
+<div class="main">
+  <h1>数据统计</h1>
+
+  <div class="card">
+    <h2>奖品发放统计</h2>
+    <canvas id="statChart" height="140"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>参与趋势</h2>
+    <canvas id="trendChart" height="140"></canvas>
+  </div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+app.initMenuHighlight();
+app.initAdminFloatingNav();
+
+async function loadStatistics() {
+  const data = await app.api.get("/api/statistics");
+
+  new Chart(document.getElementById("statChart"), {
+    type: "bar",
+    data: {
+      labels: data.prizeStats.map((item) => item.label),
+      datasets: [{
+        label: "发放数量",
+        data: data.prizeStats.map((item) => item.value),
+        backgroundColor: ["#ff4d4f", "#faad14", "#52c41a", "#999"]
+      }]
+    },
+    options: { scales: { y: { beginAtZero: true } } }
+  });
+
+  new Chart(document.getElementById("trendChart"), {
+    type: "line",
+    data: {
+      labels: data.trend.map((item) => item.date),
+      datasets: [{
+        label: "参与人数",
+        data: data.trend.map((item) => item.count),
+        borderColor: "#1890ff",
+        tension: 0.4,
+        fill: false
+      }]
+    },
+    options: { scales: { y: { beginAtZero: true } } }
+  });
+}
+
+loadStatistics().catch((error) => app.showMessage(error.message));
+</script>
+</body>
+</html>

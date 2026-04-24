@@ -1,0 +1,621 @@
+{
+  "nextIds": {
+    "activity": 1012,
+    "prize": 5006,
+    "entry": 9023,
+    "log": 9
+  },
+  "activities": [
+    {
+      "id": 1011,
+      "name": "新活动0896",
+      "startTime": "2026-02-28T16:00:00.000Z",
+      "endTime": "2026-03-15T15:59:00.000Z",
+      "drawTime": "2026-03-15T12:00:00.000Z",
+      "status": "进行中",
+      "participantCount": 1,
+      "entryCount": 3,
+      "allowMultiWin": false,
+      "interventionRate": 0,
+      "tasks": [
+        "分享朋友圈",
+        "浏览页面",
+        "下单iPhone17"
+      ],
+      "joinLimit": "每天1次",
+      "description": "",
+      "buttonText": "立即参与抽奖",
+      "subtitle": ""
+    },
+    {
+      "id": 1010,
+      "name": "新活动4844",
+      "startTime": "2026-02-28T16:00:00.000Z",
+      "endTime": "2026-03-15T15:59:00.000Z",
+      "drawTime": "2026-03-15T12:00:00.000Z",
+      "status": "待开奖",
+      "participantCount": 0,
+      "entryCount": 0,
+      "allowMultiWin": false,
+      "interventionRate": 0,
+      "tasks": [
+        "分享朋友圈"
+      ],
+      "joinLimit": "每天1次",
+      "description": "",
+      "buttonText": "立即参与抽奖",
+      "subtitle": ""
+    },
+    {
+      "id": 1009,
+      "name": "新活动3063",
+      "startTime": "2026-03-01T00:00:00+08:00",
+      "endTime": "2026-03-15T23:59:59+08:00",
+      "drawTime": "2026-03-15T20:00:00+08:00",
+      "status": "草稿",
+      "participantCount": 0,
+      "entryCount": 0,
+      "allowMultiWin": false,
+      "interventionRate": 0,
+      "tasks": [
+        "分享朋友圈"
+      ]
+    },
+    {
+      "id": 1008,
+      "name": "新活动9870",
+      "startTime": "2026-02-28T16:00:00.000Z",
+      "endTime": "2026-03-15T15:59:00.000Z",
+      "drawTime": "2026-03-15T12:00:00.000Z",
+      "status": "进行中",
+      "participantCount": 0,
+      "entryCount": 0,
+      "allowMultiWin": false,
+      "interventionRate": 0,
+      "tasks": [
+        "分享朋友圈"
+      ],
+      "joinLimit": "每天1次",
+      "description": "",
+      "buttonText": "立即参与抽奖",
+      "subtitle": ""
+    },
+    {
+      "id": 1007,
+      "name": "新活动1975",
+      "startTime": "2026-03-01T00:00:00+08:00",
+      "endTime": "2026-03-15T23:59:59+08:00",
+      "drawTime": "2026-03-15T20:00:00+08:00",
+      "status": "草稿",
+      "participantCount": 0,
+      "entryCount": 0,
+      "allowMultiWin": false,
+      "interventionRate": 0,
+      "tasks": [
+        "分享朋友圈"
+      ]
+    },
+    {
+      "id": 1006,
+      "name": "新活动5770",
+      "startTime": "2026-02-28T16:00:00.000Z",
+      "endTime": "2026-03-15T15:59:00.000Z",
+      "drawTime": "2026-03-15T12:00:00.000Z",
+      "status": "已开奖",
+      "participantCount": 1,
+      "entryCount": 1,
+      "allowMultiWin": false,
+      "interventionRate": 0,
+      "tasks": [
+        "分享朋友圈"
+      ],
+      "joinLimit": "每天1次",
+      "description": "11111",
+      "buttonText": "立即参与抽奖",
+      "subtitle": "123"
+    },
+    {
+      "id": 1005,
+      "name": "123",
+      "startTime": "2026-03-01T00:00:00+08:00",
+      "endTime": "2026-03-15T23:59:59+08:00",
+      "drawTime": "2026-03-15T20:00:00+08:00",
+      "status": "草稿",
+      "participantCount": 0,
+      "entryCount": 0,
+      "allowMultiWin": false,
+      "interventionRate": 0,
+      "tasks": [
+        "分享朋友圈"
+      ]
+    },
+    {
+      "id": 1004,
+      "name": "新活动0194",
+      "startTime": "2026-03-01T00:00:00+08:00",
+      "endTime": "2026-03-15T23:59:59+08:00",
+      "drawTime": "2026-03-15T20:00:00+08:00",
+      "status": "草稿",
+      "participantCount": 0,
+      "entryCount": 0,
+      "allowMultiWin": false,
+      "interventionRate": 0,
+      "tasks": [
+        "分享朋友圈"
+      ]
+    },
+    {
+      "id": 1003,
+      "name": "新活动6219",
+      "startTime": "2026-02-28T16:00:00.000Z",
+      "endTime": "2026-03-15T15:59:00.000Z",
+      "drawTime": "2026-03-15T12:00:00.000Z",
+      "status": "草稿",
+      "participantCount": 1,
+      "entryCount": 9,
+      "allowMultiWin": false,
+      "interventionRate": 100,
+      "tasks": [
+        "浏览页面",
+        "下单iphone17promax"
+      ],
+      "joinLimit": "无限制",
+      "description": "",
+      "buttonText": "立即参与抽奖",
+      "subtitle": ""
+    },
+    {
+      "id": 1001,
+      "name": "2026双11福利大抽奖",
+      "startTime": "2026-02-01T00:00:00+08:00",
+      "endTime": "2026-02-28T23:59:59+08:00",
+      "drawTime": "2026-02-28T20:00:00+08:00",
+      "status": "进行中",
+      "participantCount": 12345,
+      "entryCount": 18941,
+      "allowMultiWin": false,
+      "interventionRate": 15,
+      "joinLimit": "每天1次",
+      "description": "围绕双11大促配置的统一开奖活动，用户完成任务后获得抽奖码，在固定时刻统一开奖。",
+      "subtitle": "完成任务，锁定你的幸运号码",
+      "buttonText": "立即参与抽奖",
+      "tasks": [
+        "分享朋友圈",
+        "每日签到",
+        "邀请好友"
+      ]
+    },
+    {
+      "id": 1002,
+      "name": "春节集卡活动",
+      "startTime": "2026-01-15T00:00:00+08:00",
+      "endTime": "2026-01-29T23:59:59+08:00",
+      "drawTime": "2026-01-29T21:00:00+08:00",
+      "status": "已结束",
+      "participantCount": 28910,
+      "entryCount": 50000,
+      "allowMultiWin": true,
+      "interventionRate": 10,
+      "joinLimit": "总共3次",
+      "description": "春节节点集卡后统一开奖，用于提升用户回访和分享转化。",
+      "subtitle": "集齐卡片，年货福利等你抽",
+      "buttonText": "去集卡赢奖品",
+      "tasks": [
+        "集卡完成",
+        "分享好友"
+      ]
+    }
+  ],
+  "prizes": [
+    {
+      "id": 5001,
+      "activityId": 1001,
+      "level": 1,
+      "name": "iPhone 16 Pro 256GB",
+      "quantity": 5,
+      "awarded": 1,
+      "type": "实物",
+      "deletable": true
+    },
+    {
+      "id": 5002,
+      "activityId": 1001,
+      "level": 2,
+      "name": "AirPods Pro 2",
+      "quantity": 20,
+      "awarded": 1,
+      "type": "实物",
+      "deletable": true
+    },
+    {
+      "id": 5003,
+      "activityId": 1001,
+      "level": 3,
+      "name": "88元无门槛红包",
+      "quantity": 200,
+      "awarded": 1,
+      "type": "红包",
+      "deletable": true
+    },
+    {
+      "id": 5004,
+      "activityId": 1001,
+      "level": 99,
+      "name": "谢谢参与",
+      "quantity": 999999,
+      "awarded": 0,
+      "type": "参与奖",
+      "deletable": false
+    },
+    {
+      "id": 5005,
+      "activityId": 1001,
+      "level": 4,
+      "name": "1",
+      "quantity": 10,
+      "awarded": 0,
+      "type": "实物",
+      "deletable": true
+    }
+  ],
+  "entries": [
+    {
+      "id": 9001,
+      "activityId": 1001,
+      "userId": "u12345",
+      "nickname": "用户潇",
+      "code": "628413",
+      "obtainedAt": "2026-02-03T19:45:00+08:00",
+      "source": "分享朋友圈",
+      "status": "已中奖",
+      "prizeId": 5002,
+      "prizeName": "二等奖：AirPods Pro 2",
+      "isWinner": true
+    },
+    {
+      "id": 9002,
+      "activityId": 1001,
+      "userId": "u67890",
+      "nickname": "用户小明",
+      "code": "749102",
+      "obtainedAt": "2026-02-03T20:10:00+08:00",
+      "source": "每日签到",
+      "status": "已中奖",
+      "prizeId": 5003,
+      "prizeName": "三等奖：88元无门槛红包",
+      "isWinner": true
+    },
+    {
+      "id": 9003,
+      "activityId": 1001,
+      "userId": "u54321",
+      "nickname": "用户阿星",
+      "code": "315794",
+      "obtainedAt": "2026-02-04T09:15:00+08:00",
+      "source": "邀请好友",
+      "status": "已中奖",
+      "prizeId": 5003,
+      "prizeName": "三等奖：88元无门槛红包",
+      "isWinner": true
+    },
+    {
+      "id": 9004,
+      "activityId": 1001,
+      "userId": "u88888",
+      "nickname": "用户花花",
+      "code": "882344",
+      "obtainedAt": "2026-02-04T10:30:00+08:00",
+      "source": "分享朋友圈",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9005,
+      "activityId": 1001,
+      "userId": "u22222",
+      "nickname": "用户大白",
+      "code": "104458",
+      "obtainedAt": "2026-02-04T11:05:00+08:00",
+      "source": "每日签到",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9006,
+      "activityId": 1001,
+      "userId": "u33333",
+      "nickname": "用户小周",
+      "code": "665103",
+      "obtainedAt": "2026-02-04T13:20:00+08:00",
+      "source": "分享朋友圈",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9007,
+      "activityId": 1002,
+      "userId": "u11111",
+      "nickname": "用户晨晨",
+      "code": "559012",
+      "obtainedAt": "2026-01-29T18:20:00+08:00",
+      "source": "集卡完成",
+      "status": "已开奖",
+      "prizeId": null,
+      "prizeName": "谢谢参与",
+      "isWinner": false
+    },
+    {
+      "id": 9008,
+      "activityId": 1006,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "828479",
+      "obtainedAt": "2026-04-24T07:38:19.660Z",
+      "source": "分享朋友圈",
+      "status": "已开奖",
+      "prizeId": null,
+      "prizeName": "谢谢参与",
+      "isWinner": false
+    },
+    {
+      "id": 9009,
+      "activityId": 1001,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "531206",
+      "obtainedAt": "2026-02-26T11:20:00+08:00",
+      "source": "每日签到",
+      "status": "已中奖",
+      "prizeId": 5002,
+      "prizeName": "二等奖：AirPods Pro 2",
+      "isWinner": true,
+      "redeemStatus": "待发货",
+      "redeemDeadline": "2026-04-30T20:00:00+08:00",
+      "recipientName": "测试用户23506",
+      "phone": "13800138000",
+      "address": "上海市徐汇区测试路 235 号",
+      "shippingStatus": "待发货"
+    },
+    {
+      "id": 9010,
+      "activityId": 1002,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "884312",
+      "obtainedAt": "2026-01-28T18:10:00+08:00",
+      "source": "集卡完成",
+      "status": "已开奖",
+      "prizeId": null,
+      "prizeName": "谢谢参与",
+      "isWinner": false
+    },
+    {
+      "id": 9011,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "101035",
+      "obtainedAt": "2026-04-24T07:43:24.529Z",
+      "source": "分享朋友圈",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9012,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "940714",
+      "obtainedAt": "2026-04-24T07:43:58.251Z",
+      "source": "分享朋友圈",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9013,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "519353",
+      "obtainedAt": "2026-04-24T07:44:34.195Z",
+      "source": "分享朋友圈",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9014,
+      "activityId": 1011,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "727273",
+      "obtainedAt": "2026-04-24T07:59:37.440Z",
+      "source": "分享朋友圈",
+      "status": "已开奖",
+      "prizeId": null,
+      "prizeName": "谢谢参与",
+      "isWinner": false
+    },
+    {
+      "id": 9015,
+      "activityId": 1011,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "207611",
+      "obtainedAt": "2026-04-24T08:02:47.541Z",
+      "source": "分享朋友圈",
+      "status": "已开奖",
+      "prizeId": null,
+      "prizeName": "谢谢参与",
+      "isWinner": false
+    },
+    {
+      "id": 9016,
+      "activityId": 1011,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "535392",
+      "obtainedAt": "2026-04-24T08:02:49.920Z",
+      "source": "分享朋友圈",
+      "status": "已开奖",
+      "prizeId": null,
+      "prizeName": "谢谢参与",
+      "isWinner": false
+    },
+    {
+      "id": 9017,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "332219",
+      "obtainedAt": "2026-04-24T08:08:58.185Z",
+      "source": "下单iphone17promax",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9018,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "881433",
+      "obtainedAt": "2026-04-24T08:09:00.394Z",
+      "source": "下单iphone17promax",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9019,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "580540",
+      "obtainedAt": "2026-04-24T08:09:02.977Z",
+      "source": "下单iphone17promax",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9020,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "952416",
+      "obtainedAt": "2026-04-24T08:09:25.127Z",
+      "source": "浏览页面",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9021,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "684179",
+      "obtainedAt": "2026-04-24T08:09:27.579Z",
+      "source": "浏览页面",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    },
+    {
+      "id": 9022,
+      "activityId": 1003,
+      "userId": "23506",
+      "nickname": "测试用户23506",
+      "code": "363719",
+      "obtainedAt": "2026-04-24T08:09:29.494Z",
+      "source": "浏览页面",
+      "status": "待开奖",
+      "prizeId": null,
+      "prizeName": "",
+      "isWinner": false
+    }
+  ],
+  "interventionLogs": [
+    {
+      "id": 8,
+      "entryId": 9002,
+      "action": "改奖",
+      "remark": "改为88元无门槛红包",
+      "operator": "admin",
+      "createdAt": "2026-04-24T02:07:47.085Z"
+    },
+    {
+      "id": 7,
+      "entryId": 9001,
+      "action": "改奖",
+      "remark": "改为AirPods Pro 2",
+      "operator": "admin",
+      "createdAt": "2026-04-24T02:07:44.402Z"
+    },
+    {
+      "id": 6,
+      "entryId": 9001,
+      "action": "改奖",
+      "remark": "改为AirPods Pro 2",
+      "operator": "admin",
+      "createdAt": "2026-04-24T02:07:42.714Z"
+    },
+    {
+      "id": 5,
+      "entryId": 9001,
+      "action": "改奖",
+      "remark": "改为AirPods Pro 2",
+      "operator": "admin",
+      "createdAt": "2026-04-21T03:17:17.164Z"
+    },
+    {
+      "id": 1,
+      "entryId": 9001,
+      "action": "改奖",
+      "remark": "客服人工调整到一等奖",
+      "operator": "admin",
+      "createdAt": "2026-02-28T20:30:00+08:00"
+    },
+    {
+      "id": 2,
+      "entryId": 9002,
+      "action": "保留中奖",
+      "remark": "核对手机号后确认",
+      "operator": "admin",
+      "createdAt": "2026-02-28T20:35:00+08:00"
+    },
+    {
+      "id": 3,
+      "entryId": 9003,
+      "action": "补发奖励",
+      "remark": "红包到账延迟，已补发",
+      "operator": "ops",
+      "createdAt": "2026-02-28T20:40:00+08:00"
+    },
+    {
+      "id": 4,
+      "entryId": 9007,
+      "action": "取消中奖",
+      "remark": "活动结束后无资格",
+      "operator": "ops",
+      "createdAt": "2026-01-29T21:30:00+08:00"
+    }
+  ]
+}

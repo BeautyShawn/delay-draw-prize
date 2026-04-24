@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>活动编辑 - 延迟开奖平台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin:0; font-family:system-ui,sans-serif; background:#f0f2f5; min-height:100vh; color:#1f1f1f; }
+    .main { margin-left:240px; padding:20px; }
+    .page-head { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:20px; }
+    .page-head p { margin:6px 0 0; color:#666; }
+    .card { background:#fff; border-radius:8px; padding:20px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .field { display:flex; flex-direction:column; gap:8px; }
+    .field label { font-weight:600; }
+    .field small { color:#888; }
+    input, select, textarea { width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid #d9d9d9; border-radius:6px; font:inherit; background:#fff; }
+    textarea { min-height:96px; resize:vertical; }
+    .inline { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .inline label { font-weight:400; }
+    .tag-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .tag { background:#e6f7ff; color:#096dd9; padding:6px 10px; border-radius:999px; font-size:13px; }
+    .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+    .stat { background:#fafafa; border-radius:8px; padding:16px; }
+    .stat strong { display:block; color:#666; margin-bottom:8px; }
+    .stat span { font-size:28px; color:#1890ff; }
+    .btn { padding:10px 18px; border:none; border-radius:6px; cursor:pointer; font:inherit; }
+    .btn-primary { background:#1890ff; color:#fff; }
+    .btn-secondary { background:#fff; color:#333; border:1px solid #d9d9d9; }
+    .list { width:100%; border-collapse:collapse; }
+    .list th, .list td { padding:12px 8px; border-bottom:1px solid #f0f0f0; text-align:left; }
+    .list th { background:#fafafa; color:#666; }
+    .muted { color:#888; }
+    @media (max-width: 1100px) {
+      .grid, .grid-3, .stats { grid-template-columns:1fr; }
+      .page-head { flex-direction:column; align-items:flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div style="width:240px;background:#001529;color:#fff;height:100vh;position:fixed;top:0;left:0;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.3)">
+  <div style="padding:20px;font-size:22px;font-weight:bold;border-bottom:1px solid #0f2a47">延迟开奖平台</div>
+  <ul style="list-style:none;margin:16px 0;padding:0">
+    <li data-page="dashboard.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='dashboard.html'">仪表盘</li>
+    <li data-page="activity-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='activity-list.html'">活动管理</li>
+    <li data-page="prize-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='prize-manage.html'">奖品管理</li>
+    <li data-page="entry-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='entry-list.html'">参与记录</li>
+    <li data-page="draw-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='draw-manage.html'">开奖管理</li>
+    <li data-page="winner-intervene.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='winner-intervene.html'">中奖干预</li>
+    <li data-page="statistics.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='statistics.html'">数据统计</li>
+    <li style="padding:14px 24px;cursor:pointer;transition:0.3s;margin-top:40px" onclick="if(confirm('确定退出？'))location.href='dashboard.html'">退出登录</li>
+  </ul>
+</div>
+
+<div class="main">
+  <div class="page-head">
+    <div>
+      <h1 id="pageTitle">活动编辑</h1>
+      <p>完善活动配置、参与规则和前台展示文案，保存后即可用于后续奖品与开奖流程。</p>
+    </div>
+    <div class="inline">
+      <button class="btn btn-secondary" onclick="location.href='activity-list.html'">返回列表</button>
+      <button class="btn btn-primary" onclick="saveActivity()">保存活动</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>活动概况</h2>
+    <div class="stats">
+      <div class="stat"><strong>参与人数</strong><span id="statParticipants">-</span></div>
+      <div class="stat"><strong>抽奖码</strong><span id="statEntries">-</span></div>
+      <div class="stat"><strong>奖品数</strong><span id="statPrizes">-</span></div>
+      <div class="stat"><strong>待开奖</strong><span id="statPending">-</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>基础信息</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="name">活动名称</label>
+        <input id="name" placeholder="请输入活动名称">
+      </div>
+      <div class="field">
+        <label for="status">活动状态</label>
+        <select id="status">
+          <option value="草稿">草稿</option>
+          <option value="进行中">进行中</option>
+          <option value="待开奖">待开奖</option>
+          <option value="已开奖">已开奖</option>
+          <option value="已结束">已结束</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="startTime">开始时间</label>
+        <input id="startTime" type="datetime-local">
+      </div>
+      <div class="field">
+        <label for="endTime">结束时间</label>
+        <input id="endTime" type="datetime-local">
+      </div>
+      <div class="field">
+        <label for="drawTime">开奖时间</label>
+        <input id="drawTime" type="datetime-local">
+      </div>
+      <div class="field">
+        <label for="joinLimit">参与次数限制</label>
+        <select id="joinLimit">
+          <option value="每天1次">每天1次</option>
+          <option value="总共1次">总共1次</option>
+          <option value="总共3次">总共3次</option>
+          <option value="无限制">无限制</option>
+          <option value="自定义">自定义</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>前台展示与参与规则</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="subtitle">副标题</label>
+        <input id="subtitle" placeholder="用于前台组件的补充文案">
+      </div>
+      <div class="field">
+        <label for="buttonText">按钮文案</label>
+        <input id="buttonText" placeholder="例如：立即参与抽奖">
+      </div>
+    </div>
+    <div class="field" style="margin-top:16px;">
+      <label for="description">活动说明</label>
+      <textarea id="description" placeholder="描述活动玩法、开奖规则和领奖说明"></textarea>
+    </div>
+    <div class="grid-3" style="margin-top:16px;">
+      <div class="field">
+        <label for="tasksInput">参与任务</label>
+        <input id="tasksInput" placeholder="用中文逗号分隔，例如：分享朋友圈，每日签到">
+        <small>会同步作为参与抽奖的任务配置。</small>
+      </div>
+      <div class="field">
+        <label for="interventionRate">人工干预中奖率</label>
+        <input id="interventionRate" type="number" min="0" max="100" placeholder="0-100">
+      </div>
+      <div class="field">
+        <label>中奖策略</label>
+        <div class="inline" style="padding-top:10px;">
+          <input id="allowMultiWin" type="checkbox" style="width:auto;">
+          <label for="allowMultiWin">允许同一用户多次中奖</label>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="muted" style="margin-top:16px;">当前任务预览</div>
+      <div id="taskTags" class="tag-list"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>奖品与最近参与</h2>
+    <div class="grid">
+      <div>
+        <div class="muted" style="margin-bottom:10px;">奖品池摘要</div>
+        <table class="list">
+          <thead>
+            <tr><th>奖项</th><th>类型</th><th>库存</th></tr>
+          </thead>
+          <tbody id="prizeTableBody"></tbody>
+        </table>
+      </div>
+      <div>
+        <div class="muted" style="margin-bottom:10px;">最近参与记录</div>
+        <table class="list">
+          <thead>
+            <tr><th>用户</th><th>抽奖码</th><th>获取方式</th></tr>
+          </thead>
+          <tbody id="entryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+app.initMenuHighlight();
+app.initAdminFloatingNav();
+
+const params = new URLSearchParams(window.location.search);
+const activityId = Number(params.get("id") || "1001");
+let currentActivity = null;
+
+function toInputValue(dateString) {
+  if (!dateString) {
+    return "";
+  }
+  const date = new Date(dateString);
+  const offset = date.getTimezoneOffset();
+  const local = new Date(date.getTime() - offset * 60000);
+  return local.toISOString().slice(0, 16);
+}
+
+function toApiDate(value) {
+  if (!value) {
+    return "";
+  }
+  return new Date(value).toISOString();
+}
+
+function renderTaskTags(tasks) {
+  const container = document.getElementById("taskTags");
+  container.innerHTML = tasks.length
+    ? tasks.map((task) => `<span class="tag">${task}</span>`).join("")
+    : '<span class="muted">暂未配置参与任务</span>';
+}
+
+function fillForm(activity) {
+  currentActivity = activity;
+  document.getElementById("pageTitle").textContent = `活动编辑：${activity.name}`;
+  document.getElementById("name").value = activity.name || "";
+  document.getElementById("status").value = activity.status || "草稿";
+  document.getElementById("startTime").value = toInputValue(activity.startTime);
+  document.getElementById("endTime").value = toInputValue(activity.endTime);
+  document.getElementById("drawTime").value = toInputValue(activity.drawTime);
+  document.getElementById("joinLimit").value = activity.joinLimit || "每天1次";
+  document.getElementById("subtitle").value = activity.subtitle || "";
+  document.getElementById("buttonText").value = activity.buttonText || "";
+  document.getElementById("description").value = activity.description || "";
+  document.getElementById("tasksInput").value = (activity.tasks || []).join("，");
+  document.getElementById("interventionRate").value = activity.interventionRate ?? 0;
+  document.getElementById("allowMultiWin").checked = Boolean(activity.allowMultiWin);
+
+  document.getElementById("statParticipants").textContent = activity.participantCount.toLocaleString("zh-CN");
+  document.getElementById("statEntries").textContent = activity.entryCount.toLocaleString("zh-CN");
+  document.getElementById("statPrizes").textContent = activity.stats.prizeCount.toLocaleString("zh-CN");
+  document.getElementById("statPending").textContent = activity.stats.waitingEntries.toLocaleString("zh-CN");
+
+  document.getElementById("prizeTableBody").innerHTML = activity.prizes.length
+    ? activity.prizes.map((prize) => `
+      <tr>
+        <td>${prize.level >= 99 ? prize.name : `${prize.level}等奖：${prize.name}`}</td>
+        <td>${prize.type}</td>
+        <td>${prize.quantity}</td>
+      </tr>
+    `).join("")
+    : '<tr><td colspan="3" class="muted">暂无奖品配置</td></tr>';
+
+  document.getElementById("entryTableBody").innerHTML = activity.recentEntries.length
+    ? activity.recentEntries.map((entry) => `
+      <tr>
+        <td>${entry.nickname}</td>
+        <td>${entry.code}</td>
+        <td>${entry.source}</td>
+      </tr>
+    `).join("")
+    : '<tr><td colspan="3" class="muted">暂无参与记录</td></tr>';
+
+  renderTaskTags(activity.tasks || []);
+}
+
+function collectTasks() {
+  return document.getElementById("tasksInput").value
+    .split(/[，,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+async function loadActivity() {
+  const activity = await app.api.get(`/api/activities/${activityId}`);
+  fillForm(activity);
+}
+
+async function saveActivity() {
+  const tasks = collectTasks();
+  const payload = {
+    name: document.getElementById("name").value.trim(),
+    status: document.getElementById("status").value,
+    startTime: toApiDate(document.getElementById("startTime").value),
+    endTime: toApiDate(document.getElementById("endTime").value),
+    drawTime: toApiDate(document.getElementById("drawTime").value),
+    joinLimit: document.getElementById("joinLimit").value,
+    subtitle: document.getElementById("subtitle").value.trim(),
+    buttonText: document.getElementById("buttonText").value.trim(),
+    description: document.getElementById("description").value.trim(),
+    tasks,
+    interventionRate: Number(document.getElementById("interventionRate").value || 0),
+    allowMultiWin: document.getElementById("allowMultiWin").checked
+  };
+
+  if (!payload.name) {
+    app.showMessage("活动名称不能为空");
+    return;
+  }
+
+  await app.api.put(`/api/activities/${activityId}`, payload);
+  renderTaskTags(tasks);
+  await loadActivity();
+  app.showMessage("活动配置已保存");
+}
+
+document.getElementById("tasksInput").addEventListener("input", () => {
+  renderTaskTags(collectTasks());
+});
+
+loadActivity().catch((error) => app.showMessage(error.message));
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "draw-prize-manage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Unified draw prize admin prototype with a lightweight Node backend.",
+  "scripts": {
+    "start": "node server/index.js"
+  }
+}

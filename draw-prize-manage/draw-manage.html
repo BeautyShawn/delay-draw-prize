@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>开奖管理 - 统开奖平台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin:0; font-family:system-ui,sans-serif; background:#f0f2f5; min-height:100vh; }
+    .main { margin-left:240px; padding:20px; }
+    table { width:100%; background:#fff; border-collapse:collapse; margin-top:20px; }
+    th, td { padding:12px; border-bottom:1px solid #ddd; text-align:left; }
+    th { background:#fafafa; }
+    .btn { padding:8px 16px; background:#1890ff; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+    .btn-secondary { background:#52c41a; }
+    .note { color:#666; margin-top:8px; }
+  </style>
+</head>
+<body>
+
+<div style="width:240px;background:#001529;color:#fff;height:100vh;position:fixed;top:0;left:0;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.3)">
+  <div style="padding:20px;font-size:22px;font-weight:bold;border-bottom:1px solid #0f2a47">统一开奖平台</div>
+  <ul style="list-style:none;margin:16px 0;padding:0">
+    <li data-page="dashboard.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='dashboard.html'">仪表盘</li>
+    <li data-page="activity-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='activity-list.html'">活动管理</li>
+    <li data-page="prize-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='prize-manage.html'">奖品管理</li>
+    <li data-page="entry-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='entry-list.html'">参与记录</li>
+    <li data-page="draw-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='draw-manage.html'">开奖管理</li>
+    <li data-page="winner-intervene.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='winner-intervene.html'">中奖干预</li>
+    <li data-page="statistics.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='statistics.html'">数据统计</li>
+    <li style="padding:14px 24px;cursor:pointer;transition:0.3s;margin-top:40px" onclick="if(confirm('确定退出？'))location.href='dashboard.html'">退出登录</li>
+  </ul>
+</div>
+
+<div class="main">
+  <h1>开奖管理</h1>
+  <p class="note">可在此查看各活动开奖状态，并对待开奖活动执行统一开奖。</p>
+  <table>
+    <thead>
+      <tr>
+        <th>活动ID</th>
+        <th>活动名称</th>
+        <th>状态</th>
+        <th>待开奖记录</th>
+        <th>开奖时间</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="drawTableBody"></tbody>
+  </table>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+app.initMenuHighlight();
+app.initAdminFloatingNav();
+
+async function loadDraws() {
+  const list = await app.api.get("/api/draws");
+  document.getElementById("drawTableBody").innerHTML = list.map((item) => `
+    <tr>
+      <td>${item.id}</td>
+      <td>${item.name}</td>
+      <td>${item.status}</td>
+      <td>${item.pendingEntries}</td>
+      <td>${app.formatDateTime(item.drawTime)}</td>
+      <td>
+        ${item.pendingEntries > 0 ? `<button class="btn btn-secondary" onclick="runDraw(${item.id})">立即开奖</button>` : `<span style="color:#999">无需操作</span>`}
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function runDraw(activityId) {
+  const result = await app.api.post(`/api/draws/${activityId}/run`, {});
+  await loadDraws();
+  app.showMessage(`开奖完成，共产生 ${result.winners.length} 条中奖记录`);
+}
+
+loadDraws().catch((error) => app.showMessage(error.message));
+</script>
+</body>
+</html>

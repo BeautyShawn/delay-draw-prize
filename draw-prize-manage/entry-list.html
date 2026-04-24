@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>参与记录 - 统开奖平台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin:0; font-family:system-ui,sans-serif; background:#f0f2f5; min-height:100vh; }
+    .main { margin-left:240px; padding:20px; }
+    table { width:100%; background:#fff; border-collapse:collapse; margin-top:20px; }
+    th, td { padding:12px; border-bottom:1px solid #ddd; text-align:left; }
+    th { background:#fafafa; }
+  </style>
+</head>
+<body>
+
+<div style="width:240px;background:#001529;color:#fff;height:100vh;position:fixed;top:0;left:0;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.3)">
+  <div style="padding:20px;font-size:22px;font-weight:bold;border-bottom:1px solid #0f2a47">统一开奖平台</div>
+  <ul style="list-style:none;margin:16px 0;padding:0">
+    <li data-page="dashboard.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='dashboard.html'">仪表盘</li>
+    <li data-page="activity-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='activity-list.html'">活动管理</li>
+    <li data-page="prize-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='prize-manage.html'">奖品管理</li>
+    <li data-page="entry-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='entry-list.html'">参与记录</li>
+    <li data-page="draw-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='draw-manage.html'">开奖管理</li>
+    <li data-page="winner-intervene.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='winner-intervene.html'">中奖干预</li>
+    <li data-page="statistics.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='statistics.html'">数据统计</li>
+    <li style="padding:14px 24px;cursor:pointer;transition:0.3s;margin-top:40px" onclick="if(confirm('确定退出？'))location.href='dashboard.html'">退出登录</li>
+  </ul>
+</div>
+
+<div class="main">
+  <h1>参与记录</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>活动ID</th>
+        <th>用户ID</th>
+        <th>抽奖码</th>
+        <th>获得时间</th>
+        <th>获取方式</th>
+        <th>状态</th>
+        <th>奖品结果</th>
+      </tr>
+    </thead>
+    <tbody id="entryTableBody"></tbody>
+  </table>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+app.initMenuHighlight();
+app.initAdminFloatingNav();
+
+async function loadEntries() {
+  const entries = await app.api.get("/api/entries");
+  document.getElementById("entryTableBody").innerHTML = entries.map((entry) => `
+    <tr>
+      <td>${entry.activityId}</td>
+      <td>${entry.userId}</td>
+      <td>${entry.code}</td>
+      <td>${entry.obtainedAtLabel}</td>
+      <td>${entry.source}</td>
+      <td>${entry.status}</td>
+      <td>${entry.prizeName || "-"}</td>
+    </tr>
+  `).join("");
+}
+
+loadEntries().catch((error) => app.showMessage(error.message));
+</script>
+</body>
+</html>

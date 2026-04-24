@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>仪表盘 - 统开奖平台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin:0; font-family:system-ui,sans-serif; background:#f0f2f5; min-height:100vh; }
+    .main { margin-left:240px; padding:20px; }
+    .card { background:#fff; border-radius:8px; padding:20px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+    .metric-value { font-size:36px; color:#1890ff; }
+    .metric-warn { color:#faad14; }
+    table { width:100%; border-collapse:collapse; margin-top:12px; }
+    th, td { text-align:left; padding:12px 8px; border-bottom:1px solid #f0f0f0; }
+    th { color:#666; font-weight:600; background:#fafafa; }
+  </style>
+</head>
+<body>
+
+<div style="width:240px;background:#001529;color:#fff;height:100vh;position:fixed;top:0;left:0;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.3)">
+  <div style="padding:20px;font-size:22px;font-weight:bold;border-bottom:1px solid #0f2a47">统一开奖平台</div>
+  <ul style="list-style:none;margin:16px 0;padding:0">
+    <li data-page="dashboard.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='dashboard.html'">仪表盘</li>
+    <li data-page="activity-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='activity-list.html'">活动管理</li>
+    <li data-page="prize-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='prize-manage.html'">奖品管理</li>
+    <li data-page="entry-list.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='entry-list.html'">参与记录</li>
+    <li data-page="draw-manage.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='draw-manage.html'">开奖管理</li>
+    <li data-page="winner-intervene.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='winner-intervene.html'">中奖干预</li>
+    <li data-page="statistics.html" style="padding:14px 24px;cursor:pointer;transition:0.3s" onclick="location.href='statistics.html'">数据统计</li>
+    <li style="padding:14px 24px;cursor:pointer;transition:0.3s;margin-top:40px" onclick="if(confirm('确定退出？'))location.href='dashboard.html'">退出登录</li>
+  </ul>
+</div>
+
+<div class="main">
+  <h1>仪表盘</h1>
+  <div class="card">
+    <h2>今日概览</h2>
+    <div class="stats">
+      <div class="card"><strong>进行中活动</strong><br><span id="activeActivities" class="metric-value">-</span><br><small>系统实时汇总</small></div>
+      <div class="card"><strong>总参与人数</strong><br><span id="totalParticipants" class="metric-value">-</span><br><small>去重用户数</small></div>
+      <div class="card"><strong>总抽奖码</strong><br><span id="totalEntries" class="metric-value">-</span><br><small>累计参与记录</small></div>
+      <div class="card"><strong>待开奖活动</strong><br><span id="pendingDrawActivities" class="metric-value metric-warn">-</span><br><small>可前往开奖管理执行</small></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>活动概览</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>活动名称</th>
+          <th>状态</th>
+          <th>参与人数</th>
+          <th>抽奖码</th>
+          <th>已中奖</th>
+        </tr>
+      </thead>
+      <tbody id="activitySummaryBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+app.initMenuHighlight();
+app.initAdminFloatingNav();
+
+async function loadDashboard() {
+  const data = await app.api.get("/api/dashboard");
+  document.getElementById("activeActivities").textContent = data.activeActivities;
+  document.getElementById("totalParticipants").textContent = data.totalParticipants.toLocaleString("zh-CN");
+  document.getElementById("totalEntries").textContent = data.totalEntries.toLocaleString("zh-CN");
+  document.getElementById("pendingDrawActivities").textContent = data.pendingDrawActivities;
+
+  const tbody = document.getElementById("activitySummaryBody");
+  tbody.innerHTML = data.activities.map((activity) => `
+    <tr>
+      <td>${activity.id}</td>
+      <td>${activity.name}</td>
+      <td>${activity.status}</td>
+      <td>${activity.participantCount.toLocaleString("zh-CN")}</td>
+      <td>${activity.entryCount.toLocaleString("zh-CN")}</td>
+      <td>${activity.winnerCount.toLocaleString("zh-CN")}</td>
+    </tr>
+  `).join("");
+}
+
+loadDashboard().catch((error) => app.showMessage(error.message));
+</script>
+</body>
+</html>

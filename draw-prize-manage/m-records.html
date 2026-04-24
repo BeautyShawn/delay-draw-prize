@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>中奖记录 - 活动页</title>
+  <link rel="stylesheet" href="/assets/mobile.css">
+</head>
+<body>
+  <div class="mobile-shell">
+    <div class="page">
+      <section class="hero">
+        <div class="eyebrow">我的奖品</div>
+        <h1>中奖记录与领奖进度</h1>
+        <p>统一查看测试用户 23506 的中奖结果、兑奖状态和对应入口。</p>
+        <div class="directory" data-mobile-directory></div>
+      </section>
+
+      <section class="card">
+        <div class="metrics">
+          <div class="metric"><strong id="metricWins">-</strong><span>累计中奖</span></div>
+          <div class="metric"><strong id="metricRedeem">-</strong><span>待兑奖</span></div>
+          <div class="metric"><strong id="metricDelivered">-</strong><span>已发放</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">记录列表</h2>
+        <div id="recordList" class="record-list"></div>
+      </section>
+    </div>
+  </div>
+  <script src="/assets/mobile.js"></script>
+  <script>
+    const userId = mobileApp.getUserId();
+
+    mobileApp.api.get(`/api/mobile/records?userId=${encodeURIComponent(userId)}`)
+      .then((data) => {
+        document.getElementById("metricWins").textContent = data.summary.totalWins;
+        document.getElementById("metricRedeem").textContent = data.summary.pendingRedeem;
+        document.getElementById("metricDelivered").textContent = data.summary.delivered;
+
+        const list = document.getElementById("recordList");
+        if (!data.records.length) {
+          list.innerHTML = '<div class="record-item"><div class="subtle">暂无中奖或开奖记录。</div></div>';
+          return;
+        }
+
+        list.innerHTML = data.records.map((record) => `
+          <div class="record-item">
+            <div>
+              <span class="status-badge ${record.isWinner ? "status-win" : "status-lost"}">${record.status}</span>
+              <strong style="margin-top:10px;">${record.activityName}</strong>
+              <div class="subtle">${record.prizeName} · 抽奖码 ${record.code}</div>
+              <div class="subtle">开奖时间：${record.obtainedAtLabel}</div>
+              ${record.trackingNo ? `<div class="subtle">物流单号：${record.trackingNo}</div>` : ""}
+            </div>
+            <div class="record-side">
+              ${record.isWinner
+                ? `<a class="btn btn-primary" href="/m-redeem.html?entryId=${record.entryId}&userId=${encodeURIComponent(userId)}" style="padding:10px 14px;display:inline-block;">查看</a>`
+                : `<div class="badge">已结束</div>`}
+            </div>
+          </div>
+        `).join("");
+      })
+      .catch(() => {
+        document.getElementById("recordList").innerHTML = '<div class="record-item"><div class="subtle">记录加载失败，请稍后重试。</div></div>';
+      });
+  </script>
+</body>
+</html>

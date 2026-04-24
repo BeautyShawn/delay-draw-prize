@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>我的抽奖活动 - 活动列表</title>
+  <link rel="stylesheet" href="/assets/mobile.css">
+</head>
+<body>
+  <div class="mobile-shell">
+    <div class="page">
+      <section class="hero">
+        <div class="eyebrow">我的抽奖活动</div>
+        <h1>参加过的活动都在这里</h1>
+        <p>按活动查看你的参与状态、抽奖码数量和开奖结果。点击任一活动卡片，即可进入对应详情页继续查看或兑奖。</p>
+        <div class="directory" data-mobile-directory></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">活动总览</h2>
+        <div class="metrics">
+          <div class="metric"><strong id="metricActivities">-</strong><span>累计活动</span></div>
+          <div class="metric"><strong id="metricEntries">-</strong><span>我的抽奖码</span></div>
+          <div class="metric"><strong id="metricWon">-</strong><span>已中奖活动</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <span class="badge">可点击进入详情</span>
+        <h2 class="section-title">我的活动列表</h2>
+        <div id="activityList" class="activity-list"></div>
+      </section>
+    </div>
+  </div>
+  <script src="/assets/mobile.js"></script>
+  <script>
+    const userId = mobileApp.getUserId();
+
+    function getStatusClass(status) {
+      if (status === "已中奖") return "status-win";
+      if (status === "未中奖") return "status-lost";
+      return "status-pending";
+    }
+
+    function renderActivities(data) {
+      document.getElementById("metricActivities").textContent = data.summary.totalActivities;
+      document.getElementById("metricEntries").textContent = data.summary.totalUserEntries;
+      document.getElementById("metricWon").textContent = data.summary.wonActivities;
+
+      const mount = document.getElementById("activityList");
+      if (!data.activities.length) {
+        mount.innerHTML = '<div class="activity-card"><div class="subtle">暂无活动，后台创建后会自动出现在这里。</div></div>';
+        return;
+      }
+
+      mount.innerHTML = data.activities.map((activity) => `
+        <a class="activity-link" href="/m-activity-detail.html?id=${activity.id}&userId=${encodeURIComponent(userId)}">
+          <div class="activity-card">
+            <div class="activity-card-head">
+              <div>
+                <span class="status-badge ${getStatusClass(activity.userStatus)}">${activity.userStatus}</span>
+                <h3>${activity.name}</h3>
+                <div class="subtle">${activity.subtitle || activity.description || "查看活动详情与我的参与情况"}</div>
+              </div>
+              <div class="badge">${activity.summary.statusLabel}</div>
+            </div>
+            <div class="activity-meta">
+              <div class="activity-meta-item"><strong>${activity.userEntryCount}</strong><span>我的抽奖码</span></div>
+              <div class="activity-meta-item"><strong>${activity.tasks.length}</strong><span>参与任务</span></div>
+              <div class="activity-meta-item"><strong>${activity.summary.drawTime}</strong><span>开奖时间</span></div>
+            </div>
+          </div>
+        </a>
+      `).join("");
+    }
+
+    mobileApp.api.get(`/api/mobile/activities?userId=${encodeURIComponent(userId)}`)
+      .then(renderActivities)
+      .catch(() => {
+        document.getElementById("activityList").innerHTML = '<div class="activity-card"><div class="subtle">活动加载失败，请稍后重试。</div></div>';
+      });
+  </script>
+</body>
+</html>

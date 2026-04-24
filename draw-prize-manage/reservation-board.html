@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>预约看板原型 - SPA 门店预约系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --sidebar-width: 236px;
+      --panel-width: 340px;
+      --lane-label-width: 176px;
+      --hour-width: 122px;
+      --board-start: 10;
+      --board-hours: 12;
+      --time-width: calc(var(--hour-width) * var(--board-hours));
+      --bg: #f4efe8;
+      --bg-deep: #e9dfd3;
+      --ink: #241b17;
+      --muted: #7f7068;
+      --line: rgba(76, 52, 37, 0.12);
+      --card: rgba(255, 250, 244, 0.92);
+      --card-strong: #fffdf9;
+      --accent: #bd6033;
+      --accent-soft: #f4dfcf;
+      --teal: #206c68;
+      --teal-soft: #dceeee;
+      --gold: #d4a94f;
+      --gold-soft: #f7ebc6;
+      --rose: #b5544d;
+      --rose-soft: #f4dddb;
+      --shadow: 0 18px 44px rgba(73, 44, 26, 0.14);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 221, 187, 0.75), transparent 24%),
+        radial-gradient(circle at top right, rgba(202, 230, 224, 0.48), transparent 30%),
+        linear-gradient(180deg, #fbf7f1 0%, var(--bg) 58%, #efe7dc 100%);
+    }
+
+    body {
+      display: flex;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      min-height: 100vh;
+      padding: 24px 18px;
+      background:
+        linear-gradient(180deg, rgba(35, 24, 20, 0.96), rgba(52, 34, 28, 0.96)),
+        #2e201b;
+      color: #f8f0ea;
+      position: fixed;
+      inset: 0 auto 0 0;
+      box-shadow: 12px 0 34px rgba(34, 21, 16, 0.22);
+      z-index: 20;
+    }
+
+    .brand {
+      padding: 8px 8px 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f3c777, #c7803b);
+      color: #41220f;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin: 10px 0 0;
+      color: rgba(248, 240, 234, 0.72);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .nav {
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav a {
+      color: inherit;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 14px;
+      border-radius: 16px;
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(3px);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(243, 199, 119, 0.18);
+      color: #f3c777;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sidebar-note {
+      margin-top: 28px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(248, 240, 234, 0.78);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .main {
+      margin-left: var(--sidebar-width);
+      width: calc(100% - var(--sidebar-width));
+      padding: 24px 26px 28px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .hero-card,
+    .summary-card,
+    .board-card,
+    .detail-card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      border-radius: 28px;
+    }
+
+    .hero-card {
+      padding: 26px 28px;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(255, 247, 228, 0.82), transparent 22%),
+        linear-gradient(140deg, rgba(255, 243, 232, 0.92), rgba(255, 250, 247, 0.92));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      right: -30px;
+      bottom: -46px;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(32, 108, 104, 0.12), transparent 68%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(189, 96, 51, 0.12);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .hero h2 {
+      margin: 16px 0 10px;
+      font-size: 34px;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 680px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .hero-actions {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 18px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(53, 31, 20, 0.12);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #c96f3c, #a44622);
+      color: #fff9f4;
+    }
+
+    .btn-secondary {
+      background: rgba(36, 27, 23, 0.06);
+      color: var(--ink);
+    }
+
+    .summary-card {
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .summary-card h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .summary-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .summary-item {
+      padding: 14px;
+      border-radius: 18px;
+      background: var(--card-strong);
+      border: 1px solid var(--line);
+    }
+
+    .summary-item strong {
+      display: block;
+      font-size: 26px;
+      margin-top: 6px;
+    }
+
+    .summary-item span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .summary-foot {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--teal-soft), rgba(255, 255, 255, 0.82));
+      color: #224f4c;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--panel-width);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .board-card {
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .toolbar-left,
+    .toolbar-right,
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toolbar-chip,
+    .legend-chip {
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .toolbar-chip.active {
+      background: linear-gradient(135deg, var(--accent-soft), rgba(255, 255, 255, 0.92));
+      color: var(--accent);
+      border-color: rgba(189, 96, 51, 0.22);
+    }
+
+    .legend-chip::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+      vertical-align: middle;
+      background: var(--legend-color, #ccc);
+    }
+
+    .board-scroll {
+      overflow: auto;
+      padding-bottom: 8px;
+    }
+
+    .board-shell {
+      min-width: calc(var(--lane-label-width) + var(--time-width));
+      display: grid;
+      grid-template-columns: var(--lane-label-width) var(--time-width);
+      align-items: start;
+    }
+
+    .board-head {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      background: rgba(248, 242, 235, 0.98);
+      backdrop-filter: blur(14px);
+    }
+
+    .section-tag {
+      padding: 14px 14px 14px 6px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .time-header {
+      display: grid;
+      grid-template-columns: repeat(var(--board-hours), minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .time-cell {
+      padding: 10px 10px 12px;
+      border-right: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      position: relative;
+    }
+
+    .time-cell strong {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .section-label {
+      padding: 18px 8px 10px 4px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .lane-label,
+    .lane-track {
+      min-height: 88px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .lane-label {
+      padding: 14px 14px 12px 8px;
+      background: rgba(255, 253, 249, 0.86);
+      position: sticky;
+      left: 0;
+      z-index: 3;
+    }
+
+    .lane-label strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .lane-label span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .lane-track {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 250, 246, 0.8));
+      border-left: 1px solid var(--line);
+    }
+
+    .lane-track::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          to right,
+          transparent,
+          transparent calc(var(--hour-width) - 1px),
+          rgba(76, 52, 37, 0.08) calc(var(--hour-width) - 1px),
+          rgba(76, 52, 37, 0.08) var(--hour-width)
+        );
+      pointer-events: none;
+    }
+
+    .booking {
+      position: absolute;
+      top: 14px;
+      left: calc((var(--start) - var(--board-start)) * var(--hour-width) + (var(--offset, 0) * (var(--hour-width) / 60)));
+      width: calc((var(--duration) / 60) * var(--hour-width));
+      min-width: 66px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: 0 10px 20px rgba(52, 31, 21, 0.1);
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease, outline 180ms ease;
+      animation: liftIn 420ms ease both;
+      animation-delay: calc(var(--delay, 0) * 70ms);
+    }
+
+    .booking:hover,
+    .booking.active {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 28px rgba(52, 31, 21, 0.16);
+      outline: 2px solid rgba(36, 27, 23, 0.12);
+    }
+
+    .booking strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .booking small {
+      display: block;
+      margin-top: 6px;
+      font-size: 11px;
+      opacity: 0.85;
+      line-height: 1.45;
+    }
+
+    .booking.room {
+      background: linear-gradient(135deg, #fff2e8, #f8dccb);
+      color: #6e3016;
+    }
+
+    .booking.signature {
+      background: linear-gradient(135deg, #e6f4ef, #cfe9e5);
+      color: #144e4a;
+    }
+
+    .booking.dual {
+      background: linear-gradient(135deg, #fff6df, #f6e0ab);
+      color: #785415;
+    }
+
+    .booking.cleaning {
+      background: linear-gradient(135deg, #fdf0ef, #f2d7d3);
+      color: #7e3a34;
+    }
+
+    .booking.rest {
+      background: linear-gradient(135deg, #f2efe9, #e3ddd5);
+      color: #64584f;
+    }
+
+    .booking.leave {
+      background: linear-gradient(135deg, #e8ecef, #d4dade);
+      color: #55616b;
+    }
+
+    .current-time {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc((4.5 * var(--hour-width)));
+      width: 2px;
+      background: linear-gradient(180deg, #d84f2a, #7f1d0f);
+      box-shadow: 0 0 0 5px rgba(216, 79, 42, 0.12);
+      z-index: 2;
+    }
+
+    .current-time::before {
+      content: "当前 14:30";
+      position: absolute;
+      top: -12px;
+      left: -34px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: #7f1d0f;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .detail-card {
+      padding: 20px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .detail-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .detail-head h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .detail-time {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(32, 108, 104, 0.09), rgba(212, 169, 79, 0.08));
+      border: 1px solid rgba(32, 108, 104, 0.1);
+    }
+
+    .detail-time strong,
+    .detail-section strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .detail-time div {
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail-section {
+      padding: 16px;
+      border-radius: 20px;
+      background: var(--card-strong);
+      border: 1px solid var(--line);
+    }
+
+    .detail-list,
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(36, 27, 23, 0.06);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .micro {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .actions {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .actions .btn {
+      width: 100%;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    @keyframes liftIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1440px) {
+      :root {
+        --panel-width: 300px;
+        --lane-label-width: 164px;
+        --hour-width: 108px;
+      }
+    }
+
+    @media (max-width: 1120px) {
+      body {
+        display: block;
+      }
+
+      .sidebar {
+        position: static;
+        width: auto;
+        min-height: auto;
+        border-radius: 0 0 28px 28px;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .hero,
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-card {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">LS</div>
+      <h1>SPA 预约中心</h1>
+      <p>围绕房间、技师与时间轴的统一调度面板，帮助前台在高峰时段快速确认资源与处理改约。</p>
+    </div>
+
+    <ul class="nav">
+      <li><a href="#"><span>仪表盘</span></a></li>
+      <li><a href="#" class="active"><span>预约看板</span><span class="nav-badge">Now</span></a></li>
+      <li><a href="#"><span>预约列表</span></a></li>
+      <li><a href="#"><span>房间管理</span></a></li>
+      <li><a href="#"><span>技师排班</span></a></li>
+      <li><a href="#"><span>项目配置</span></a></li>
+      <li><a href="#"><span>客户档案</span></a></li>
+    </ul>
+
+    <div class="sidebar-note">
+      当前原型重点表达三件事：
+      时间轴如何承载预约块、房间清理缓冲如何显式展示、技师状态如何和同一预约单联动。
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="hero">
+      <div class="hero-card hero">
+        <div>
+          <div class="eyebrow">April 22 / Wednesday / 单店模式</div>
+          <h2>预约看板<br>让房态、技师状态和服务节奏同屏可见</h2>
+          <p>本原型聚焦前台高频场景：客户通过电话或小程序自动确认后，系统已锁定房间和技师；前台可在同一页面查看今天的预约密度、房间清理进度、技师排班占用，以及每一单的多客户、多项目和多技师信息。</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary">新建预约</button>
+            <button class="btn btn-secondary">批量查看今日冲突</button>
+            <button class="btn btn-secondary">导出预约清单</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <h3>今日营运概览</h3>
+        <div class="summary-list">
+          <div class="summary-item">
+            <span>今日预约</span>
+            <strong>26</strong>
+          </div>
+          <div class="summary-item">
+            <span>服务中</span>
+            <strong>5</strong>
+          </div>
+          <div class="summary-item">
+            <span>待到店</span>
+            <strong>8</strong>
+          </div>
+          <div class="summary-item">
+            <span>待恢复房间</span>
+            <strong>2</strong>
+          </div>
+        </div>
+        <div class="summary-foot">
+          14:00 - 18:00 为今日高峰期。当前剩余可约房间 2 间，可立即接待 90 分钟单人项目；双人房已接近满载，建议优先引导 18:30 后时段。
+        </div>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <div class="board-card">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <span class="toolbar-chip active">今日</span>
+            <span class="toolbar-chip">明日</span>
+            <span class="toolbar-chip">全部房型</span>
+            <span class="toolbar-chip">全部技师</span>
+            <span class="toolbar-chip">自动确认预约</span>
+          </div>
+          <div class="toolbar-right">
+            <span class="toolbar-chip active">综合看板</span>
+            <span class="toolbar-chip">房间视图</span>
+            <span class="toolbar-chip">技师视图</span>
+          </div>
+        </div>
+
+        <div class="legend" style="margin-bottom: 12px;">
+          <span class="legend-chip" style="--legend-color:#d98a62;">已预约</span>
+          <span class="legend-chip" style="--legend-color:#6fb8aa;">服务中</span>
+          <span class="legend-chip" style="--legend-color:#e2bf61;">双人/多人服务</span>
+          <span class="legend-chip" style="--legend-color:#d8a8a2;">清理中 / 待恢复</span>
+          <span class="legend-chip" style="--legend-color:#bfb5aa;">休息 / 请假</span>
+        </div>
+
+        <div class="board-scroll">
+          <div class="board-shell">
+            <div class="board-head section-tag">资源</div>
+            <div class="board-head time-header">
+              <div class="time-cell"><strong>10:00</strong>营业开始</div>
+              <div class="time-cell"><strong>11:00</strong>早场</div>
+              <div class="time-cell"><strong>12:00</strong>午前</div>
+              <div class="time-cell"><strong>13:00</strong>午间</div>
+              <div class="time-cell"><strong>14:00</strong>峰值开始</div>
+              <div class="time-cell"><strong>15:00</strong>高峰</div>
+              <div class="time-cell"><strong>16:00</strong>高峰</div>
+              <div class="time-cell"><strong>17:00</strong>高峰</div>
+              <div class="time-cell"><strong>18:00</strong>晚场</div>
+              <div class="time-cell"><strong>19:00</strong>晚场</div>
+              <div class="time-cell"><strong>20:00</strong>夜场</div>
+              <div class="time-cell"><strong>21:00</strong>闭店前</div>
+            </div>
+
+            <div class="section-label">房间状态</div>
+            <div class="section-label"></div>
+
+            <div class="lane-label">
+              <strong>兰纳 1 号 · 单人精油房</strong>
+              <span>单人房 · 支持精油 SPA / 芳疗舒缓<br>当前状态：14:00 开始服务中</span>
+            </div>
+            <div class="lane-track">
+              <div class="current-time"></div>
+              <button class="booking room active" style="--start: 10; --offset: 30; --duration: 90; --delay: 0;" data-booking="booking-a">
+                <strong>张女士 × 1</strong>
+                <small>精油 SPA 90 分钟<br>10:30 - 12:00 / 技师：Nok</small>
+              </button>
+              <button class="booking signature" style="--start: 14; --duration: 120; --delay: 1;" data-booking="booking-b">
+                <strong>李先生 × 1</strong>
+                <small>芳疗修复 120 分钟<br>14:00 - 16:00 / 技师：Mali</small>
+              </button>
+              <button class="booking cleaning" style="--start: 16; --duration: 30; --delay: 2;" data-booking="booking-b">
+                <strong>清理缓冲</strong>
+                <small>16:00 - 16:30 / 待前台恢复</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>清迈 2 号 · 双人 SPA 房</strong>
+              <span>双人房 · 支持泰式按摩 / 双人 SPA<br>当前状态：17:30 后待恢复</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking dual" style="--start: 12; --duration: 150; --delay: 1;" data-booking="booking-c">
+                <strong>王女士、陈女士 × 2</strong>
+                <small>双人精油 150 分钟<br>12:00 - 14:30 / 技师：Mint / Ploy</small>
+              </button>
+              <button class="booking room" style="--start: 15; --duration: 150; --delay: 3;" data-booking="booking-d">
+                <strong>企业团单 VIP</strong>
+                <small>泰式按摩 + 草药热敷<br>15:00 - 17:30 / 技师：Nid / Fah</small>
+              </button>
+              <button class="booking cleaning" style="--start: 17; --offset: 30; --duration: 30; --delay: 4;" data-booking="booking-d">
+                <strong>清理缓冲</strong>
+                <small>17:30 - 18:00 / 房间待恢复</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>曼谷 3 号 · 泰式理疗房</strong>
+              <span>单人房 · 支持泰式拉伸 / 肩颈理疗<br>当前状态：13:30 后空闲可约</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking room" style="--start: 11; --duration: 120; --delay: 2;" data-booking="booking-e">
+                <strong>赵女士 × 1</strong>
+                <small>泰式拉伸 120 分钟<br>11:00 - 13:00 / 技师：Aom</small>
+              </button>
+              <button class="booking cleaning" style="--start: 13; --duration: 30; --delay: 3;" data-booking="booking-e">
+                <strong>清理缓冲</strong>
+                <small>13:00 - 13:30 / 已完成</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>苏梅 5 号 · 静音芳疗房</strong>
+              <span>单人房 · 支持静音 SPA / 睡眠护理<br>当前状态：全天 18:00 前可约</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking room" style="--start: 18; --duration: 120; --delay: 4;" data-booking="booking-f">
+                <strong>周先生 × 1</strong>
+                <small>睡眠调理 SPA 120 分钟<br>18:00 - 20:00 / 技师：Ying</small>
+              </button>
+              <button class="booking cleaning" style="--start: 20; --duration: 30; --delay: 5;" data-booking="booking-f">
+                <strong>清理缓冲</strong>
+                <small>20:00 - 20:30 / 自动进入待恢复</small>
+              </button>
+            </div>
+
+            <div class="section-label">技师状态</div>
+            <div class="section-label"></div>
+
+            <div class="lane-label">
+              <strong>Nok</strong>
+              <span>精油 SPA / 芳疗舒缓<br>班次：10:00 - 19:00</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking room" style="--start: 10; --offset: 30; --duration: 90; --delay: 0;" data-booking="booking-a">
+                <strong>张女士</strong>
+                <small>兰纳 1 号 / 精油 SPA</small>
+              </button>
+              <button class="booking rest" style="--start: 13; --duration: 60; --delay: 2;" data-booking="rest-nok">
+                <strong>午休</strong>
+                <small>13:00 - 14:00</small>
+              </button>
+              <button class="booking room" style="--start: 15; --duration: 150; --delay: 3;" data-booking="booking-d">
+                <strong>企业团单 VIP</strong>
+                <small>清迈 2 号 / 草药热敷</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>Mali</strong>
+              <span>芳疗修复 / 静音护理<br>班次：11:00 - 20:00</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking signature" style="--start: 14; --duration: 120; --delay: 1;" data-booking="booking-b">
+                <strong>李先生</strong>
+                <small>兰纳 1 号 / 芳疗修复</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>Mint</strong>
+              <span>双人精油 / 肩颈理疗<br>班次：10:00 - 18:00</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking dual" style="--start: 12; --duration: 150; --delay: 2;" data-booking="booking-c">
+                <strong>王女士、陈女士</strong>
+                <small>清迈 2 号 / 双人精油</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>Ploy</strong>
+              <span>双人精油 / 轻体护理<br>班次：10:00 - 18:00</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking dual" style="--start: 12; --duration: 150; --delay: 3;" data-booking="booking-c">
+                <strong>王女士、陈女士</strong>
+                <small>清迈 2 号 / 双人精油</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>Fah</strong>
+              <span>泰式按摩 / 热石调理<br>班次：14:00 - 22:00</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking room" style="--start: 15; --duration: 150; --delay: 4;" data-booking="booking-d">
+                <strong>企业团单 VIP</strong>
+                <small>清迈 2 号 / 泰式按摩</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>Ying</strong>
+              <span>睡眠调理 / 静音芳疗<br>班次：17:00 - 22:00</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking room" style="--start: 18; --duration: 120; --delay: 5;" data-booking="booking-f">
+                <strong>周先生</strong>
+                <small>苏梅 5 号 / 睡眠调理</small>
+              </button>
+            </div>
+
+            <div class="lane-label">
+              <strong>Aom</strong>
+              <span>泰式拉伸 / 肩颈放松<br>班次：10:00 - 17:00</span>
+            </div>
+            <div class="lane-track">
+              <button class="booking room" style="--start: 11; --duration: 120; --delay: 1;" data-booking="booking-e">
+                <strong>赵女士</strong>
+                <small>曼谷 3 号 / 泰式拉伸</small>
+              </button>
+              <button class="booking leave" style="--start: 17; --duration: 60; --delay: 5;" data-booking="leave-aom">
+                <strong>培训请假</strong>
+                <small>17:00 - 18:00</small>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="detail-card" id="detailPanel">
+        <div class="detail-head">
+          <div>
+            <h3 id="detailTitle">李先生 · 芳疗修复</h3>
+            <div class="micro" id="detailSubtitle">预约单 A240422-014 · 小程序自动确认</div>
+          </div>
+          <span class="status-pill" id="detailStatus">服务中</span>
+        </div>
+
+        <div class="detail-time">
+          <strong>预约时段</strong>
+          <div id="detailTime">14:00 - 16:00 服务 / 16:00 - 16:30 清理缓冲</div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-section">
+            <strong>客户信息</strong>
+            <div class="detail-list" id="detailCustomers">
+              <span class="chip">李先生</span>
+            </div>
+            <div class="micro" id="detailContact" style="margin-top: 10px;">联系电话：138 2222 1088</div>
+          </div>
+
+          <div class="detail-section">
+            <strong>项目安排</strong>
+            <div class="chip-list" id="detailProjects">
+              <span class="chip">芳疗修复 120 分钟</span>
+            </div>
+            <div class="micro" id="detailProjectNote" style="margin-top: 10px;">项目时长固定，结束后房间自动进入 30 分钟清理中。</div>
+          </div>
+
+          <div class="detail-section">
+            <strong>资源分配</strong>
+            <div class="chip-list" id="detailResources">
+              <span class="chip">房间：兰纳 1 号</span>
+              <span class="chip">技师：Mali</span>
+              <span class="chip">房型：单人精油房</span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <strong>预约备注</strong>
+            <div class="micro" id="detailRemark">客户要求低音乐、弱光环境；为高复购客户，建议结束后推荐 19:00 后次卡体验。</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary">开始服务</button>
+          <button class="btn btn-secondary">完成服务</button>
+          <button class="btn btn-secondary">改约</button>
+          <button class="btn btn-secondary">房间恢复可用</button>
+        </div>
+
+        <div class="footer-note">
+          原型说明：同一预约单会在房间泳道与对应技师泳道中同步高亮；清理缓冲作为独立色块呈现，方便前台判断“服务结束”和“房间恢复可接单”之间的差异。
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const detailMap = {
+      "booking-a": {
+        title: "张女士 · 精油 SPA",
+        subtitle: "预约单 A240422-008 · 电话预约 / 前台录入",
+        status: "已完成",
+        time: "10:30 - 12:00 服务 / 12:00 - 12:30 清理缓冲",
+        customers: ["张女士"],
+        contact: "联系电话：139 8812 2201",
+        projects: ["精油 SPA 90 分钟"],
+        note: "房间已清理完成，前台已恢复可用。",
+        resources: ["房间：兰纳 1 号", "技师：Nok", "房型：单人精油房"],
+        remark: "客户偏好：肩颈精油力度中等。"
+      },
+      "booking-b": {
+        title: "李先生 · 芳疗修复",
+        subtitle: "预约单 A240422-014 · 小程序自动确认",
+        status: "服务中",
+        time: "14:00 - 16:00 服务 / 16:00 - 16:30 清理缓冲",
+        customers: ["李先生"],
+        contact: "联系电话：138 2222 1088",
+        projects: ["芳疗修复 120 分钟"],
+        note: "项目时长固定，结束后房间自动进入 30 分钟清理中。",
+        resources: ["房间：兰纳 1 号", "技师：Mali", "房型：单人精油房"],
+        remark: "客户要求低音乐、弱光环境；为高复购客户。"
+      },
+      "booking-c": {
+        title: "王女士、陈女士 · 双人精油护理",
+        subtitle: "预约单 A240422-019 · 小程序自动确认",
+        status: "已到店",
+        time: "12:00 - 14:30 服务 / 双人房同步占用",
+        customers: ["王女士", "陈女士"],
+        contact: "联系电话：136 7761 8802",
+        projects: ["双人精油护理 150 分钟", "肩颈舒缓加项 30 分钟"],
+        note: "多人预约单按单房间管理，技师按项目明细绑定。",
+        resources: ["房间：清迈 2 号", "技师：Mint", "技师：Ploy", "房型：双人 SPA 房"],
+        remark: "双人同行，需并排床位与热茶准备。"
+      },
+      "booking-d": {
+        title: "企业团单 VIP · 泰式按摩 + 草药热敷",
+        subtitle: "预约单 A240422-023 · 电话预约 / 企业客户",
+        status: "待服务",
+        time: "15:00 - 17:30 服务 / 17:30 - 18:00 清理缓冲",
+        customers: ["吴先生", "刘先生"],
+        contact: "联系电话：137 5500 6777",
+        projects: ["泰式按摩 90 分钟", "草药热敷 60 分钟"],
+        note: "一期默认多项目按串行累计时长计算。",
+        resources: ["房间：清迈 2 号", "技师：Nok", "技师：Fah", "房型：双人 SPA 房"],
+        remark: "企业客户会准点到店，前台需提前 10 分钟备房。"
+      },
+      "booking-e": {
+        title: "赵女士 · 泰式拉伸",
+        subtitle: "预约单 A240422-006 · 电话预约",
+        status: "已完成",
+        time: "11:00 - 13:00 服务 / 13:00 - 13:30 清理缓冲",
+        customers: ["赵女士"],
+        contact: "联系电话：150 8801 2209",
+        projects: ["泰式拉伸 120 分钟"],
+        note: "房间已恢复可用，技师已释放。",
+        resources: ["房间：曼谷 3 号", "技师：Aom", "房型：泰式理疗房"],
+        remark: "客户对肩颈拉伸反馈良好。"
+      },
+      "booking-f": {
+        title: "周先生 · 睡眠调理 SPA",
+        subtitle: "预约单 A240422-027 · 小程序自动确认",
+        status: "待服务",
+        time: "18:00 - 20:00 服务 / 20:00 - 20:30 清理缓冲",
+        customers: ["周先生"],
+        contact: "联系电话：135 0009 4218",
+        projects: ["睡眠调理 SPA 120 分钟"],
+        note: "房间清理结束后需前台手动恢复可用。",
+        resources: ["房间：苏梅 5 号", "技师：Ying", "房型：静音芳疗房"],
+        remark: "客户指定安静房间，禁止电话外放。"
+      },
+      "rest-nok": {
+        title: "Nok · 午休时段",
+        subtitle: "排班片段 · 技师状态",
+        status: "休息中",
+        time: "13:00 - 14:00",
+        customers: ["无客户预约"],
+        contact: "排班说明：午休不可被预约",
+        projects: ["技师休息时间"],
+        note: "排班、休息、请假状态优先级高于可预约状态。",
+        resources: ["技师：Nok"],
+        remark: "若需插单，需管理员先调整排班。"
+      },
+      "leave-aom": {
+        title: "Aom · 培训请假",
+        subtitle: "排班片段 · 技师状态",
+        status: "请假",
+        time: "17:00 - 18:00",
+        customers: ["无客户预约"],
+        contact: "状态来源：店长排班配置",
+        projects: ["门店培训"],
+        note: "请假状态下，小程序与前台均不可分配该技师。",
+        resources: ["技师：Aom"],
+        remark: "若已有预约，需前台改派或改约。"
+      }
+    };
+
+    const detailTitle = document.getElementById("detailTitle");
+    const detailSubtitle = document.getElementById("detailSubtitle");
+    const detailStatus = document.getElementById("detailStatus");
+    const detailTime = document.getElementById("detailTime");
+    const detailCustomers = document.getElementById("detailCustomers");
+    const detailContact = document.getElementById("detailContact");
+    const detailProjects = document.getElementById("detailProjects");
+    const detailProjectNote = document.getElementById("detailProjectNote");
+    const detailResources = document.getElementById("detailResources");
+    const detailRemark = document.getElementById("detailRemark");
+    const bookingEls = document.querySelectorAll(".booking");
+
+    function renderChips(target, items) {
+      target.innerHTML = items.map((item) => `<span class="chip">${item}</span>`).join("");
+    }
+
+    function updateDetail(id) {
+      const detail = detailMap[id];
+      if (!detail) {
+        return;
+      }
+
+      detailTitle.textContent = detail.title;
+      detailSubtitle.textContent = detail.subtitle;
+      detailStatus.textContent = detail.status;
+      detailTime.textContent = detail.time;
+      renderChips(detailCustomers, detail.customers);
+      detailContact.textContent = detail.contact;
+      renderChips(detailProjects, detail.projects);
+      detailProjectNote.textContent = detail.note;
+      renderChips(detailResources, detail.resources);
+      detailRemark.textContent = detail.remark;
+
+      bookingEls.forEach((el) => {
+        el.classList.toggle("active", el.dataset.booking === id);
+      });
+    }
+
+    bookingEls.forEach((el) => {
+      el.addEventListener("click", () => updateDetail(el.dataset.booking));
+    });
+  </script>
+</body>
+</html>
